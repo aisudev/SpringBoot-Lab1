@@ -1,6 +1,7 @@
 package compo.main.sping1.controller;
 
 import compo.main.sping1.Event;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,12 +58,14 @@ public class EventController {
 
         Integer firstIndex = (page-1)*perPage;
         List<Event> resp = new ArrayList<>();
+        HttpHeaders responseHeader = new HttpHeaders();
+        responseHeader.set("x-total-count", String.valueOf(eventList.size()));
 
         try{
-            for(int i = 0;i < firstIndex + perPage;i++){
+            for(int i = firstIndex;i < firstIndex + perPage;i++){
                 resp.add(eventList.get(i));
             }
-            return ResponseEntity.ok(resp);
+            return new ResponseEntity<>(resp, responseHeader, HttpStatus.OK);
 
         }catch(IndexOutOfBoundsException err){
             return ResponseEntity.badRequest().body(err);

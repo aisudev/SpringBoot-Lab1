@@ -1,4 +1,4 @@
-package compo.main.sping1;
+package compo.main.sping1.entity;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,18 +1,17 @@
 package compo.main.sping1.controller;
 
 import compo.main.sping1.Event;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-//@RequestMapping("/api")
+@RequestMapping("/event")
 public class EventController {
     List<Event> eventList;
 
@@ -48,8 +47,42 @@ public class EventController {
                 .date("July 22, 2022").time("11:00").petAllowed(false).organizer("Brody Kill").build());
     }
 
-    @GetMapping("/events")
-    public ResponseEntity<?> getEventLists(){
-        return ResponseEntity.ok(eventList);
+    @GetMapping("")
+    public ResponseEntity<?> getEventLists(
+            @RequestParam(value = "_limit", required = false)Integer perPage,
+            @RequestParam(value = "_page", required = false)Integer page
+    ){
+        perPage = perPage == null?eventList.size():perPage;
+        page = page == null?1:page;
+
+        Integer firstIndex = (page-1)*perPage;
+        List<Event> resp = new ArrayList<>();
+
+        try{
+            for(int i = 0;i < firstIndex + perPage;i++){
+                resp.add(eventList.get(i));
+            }
+            return ResponseEntity.ok(resp);
+
+        }catch(IndexOutOfBoundsException err){
+            return ResponseEntity.badRequest().body(err);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getEvent(
+            @PathVariable("id") Long id
+    ){
+        Event resp = null;
+        for(Event e:eventList){
+            if(e.getId().equals(id)){
+                resp = e;
+            }
+        }
+
+        if(resp!=null){
+            return ResponseEntity.ok(resp);
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "event does not found");
     }
 }

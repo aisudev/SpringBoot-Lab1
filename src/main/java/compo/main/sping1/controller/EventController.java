@@ -3,11 +3,16 @@ package compo.main.sping1.controller;
 import compo.main.sping1.Event;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
+@RestController
+//@RequestMapping("/api")
 public class EventController {
     List<Event> eventList;
 
@@ -43,7 +48,7 @@ public class EventController {
                 .date("July 22, 2022").time("11:00").petAllowed(false).organizer("Brody Kill").build());
     }
 
-    @GetMapping("events")
+    @GetMapping("/events")
     public ResponseEntity<?> getEventLists(){
         return ResponseEntity.ok(eventList);
     }
